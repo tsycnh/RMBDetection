@@ -52,4 +52,6 @@ DGUVOETG.jpg, YH01075371
 面值识别本质就是最简单的分类问题，考虑采用keras加载预训练模型实现。
 
 <code>step1_split_train_dataset.py</code>：整理数据集  
-训练集用20000张，其余的19620张作为验证集
+训练集用20000张，其余的19620张作为验证集  
+
+<code>step2_classification.py</code>:利用Keras内建的预训练模型，快速搭建分类模型，完成面值识别分类任务。
