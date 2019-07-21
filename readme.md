@@ -54,4 +54,6 @@ DGUVOETG.jpg, YH01075371
 <code>step1_split_train_dataset.py</code>：整理数据集  
 训练集用20000张，其余的19620张作为验证集  
 
-<code>step2_classification.py</code>:利用Keras内建的预训练模型，快速搭建分类模型，完成面值识别分类任务。
+<code>step2_classification.py</code>:利用Keras内建的预训练模型，快速搭建分类模型，完成面值识别分类任务。  
+`step3_finetune.py`：在step2的基础上微调网络，提高准确率。  
+`step4_evaluate.py`：在public_test_data数据集上进行测试，输出结果，提交到官网，完成热身赛。实际训练数据用了900张，验证集900张
