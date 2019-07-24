@@ -73,7 +73,8 @@ DGUVOETG.jpg, YH01075371
    └──annos
 ```  
 
-`step5_detection.py`搭建目标检测模型
+`step5_detection.py`搭建目标检测模型。  
+`rmbgenerator.py`构建数据生成器。
 
 
 
