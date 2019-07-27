@@ -21,6 +21,7 @@ class RMBGenerator(Sequence):
         self.batch_size = batch_size
         self.images_dir = images_dir
         self.annos_dir = annos_dir
+        self.rescale = rescale
         images_list = os.listdir(images_dir)
         annos_list = os.listdir(annos_dir)
         images_list.sort()
@@ -33,7 +34,7 @@ class RMBGenerator(Sequence):
     def __getitem__(self, idx):
         start_index = idx*self.batch_size
         stop_index = (idx+1)*self.batch_size
-        x_batch = np.zeros((self.batch_size,400,400,3),dtype='uint8')
+        x_batch = np.zeros((self.batch_size,400,400,3),dtype='float32')
         y_batch = np.zeros((self.batch_size,4),dtype='float32')
         for i,p in enumerate(self.pair[start_index:stop_index]):
             if p[0].split(".")[0] != p[1].split(".")[0]:
@@ -48,7 +49,7 @@ class RMBGenerator(Sequence):
                 x_batch[i] = coded_img
                 y_batch[i] = coded_anno
                 # print(p[0],p[1])
-        return x_batch,y_batch
+        return x_batch*self.rescale,y_batch
     def on_epoch_end(self):
         random.shuffle(self.pair)
         pass
@@ -72,13 +73,14 @@ if __name__ == "__main__":
     # 检测输出
     rmbd = RMBGenerator("C:\\All\\Data\\RMB\\Detection\\train\\images",
                         "C:\\All\\Data\\RMB\\Detection\\train\\annos",
-                        4)
+                        4,rescale=1./255)
     rmbd.on_epoch_end()
     x_batch,y_batch = rmbd.__getitem__(0)
 
-    img = x_batch[0]
+    img = x_batch[0]*255
+    img = img.astype(np.uint8)
     c_x,c_y,w,h = y_batch[0]*400
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    cv2.rectangle(img,(int(c_x-w/2),int(c_y-h/2)),(int(c_x+w/2),int(c_y+h/2)),color=(255,0,0))
+    cv2.rectangle(img,(int(c_x-w/2),int(c_y-h/2)),(int(c_x+w/2),int(c_y+h/2)),color=(0,255,0),thickness=2)
     cv2.imshow("f",img)
     cv2.waitKey(0)
