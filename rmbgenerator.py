@@ -93,8 +93,8 @@ if __name__ == "__main__":
     b = mat.shape
     y_grid,x_grid,_ =np.unravel_index(np.argmax(mat),mat.shape)
     _,x_rela,y_rela,w,h = mat[y_grid][x_grid][:].tolist()
-    x_real =int((400/6)*(x_grid-x_rela))
-    y_real =int((400/6)*(y_grid-y_rela))
+    x_real =int((400/6)*(x_grid+x_rela))
+    y_real =int((400/6)*(y_grid+y_rela))
     w_real = int(400*w)
     h_real = int(400*h)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
