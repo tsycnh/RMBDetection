@@ -35,7 +35,7 @@ class RMBGenerator(Sequence):
         start_index = idx*self.batch_size
         stop_index = (idx+1)*self.batch_size
         x_batch = np.zeros((self.batch_size,400,400,3),dtype='float32')
-        y_batch = np.zeros((self.batch_size,4),dtype='float32')
+        y_batch = np.zeros((self.batch_size,6,6,5),dtype='float32')
         for i,p in enumerate(self.pair[start_index:stop_index]):
             if p[0].split(".")[0] != p[1].split(".")[0]:
                 print("图像名与标记名不符！%s %s"%(p[0],p[1]))
@@ -54,6 +54,7 @@ class RMBGenerator(Sequence):
         random.shuffle(self.pair)
         pass
     def code_anno(self,anno):
+        coded_anno = np.zeros((6,6,5),dtype='float32')
         origin_w = int(anno['size']['width'])
         origin_h = int(anno['size']['height'])
 
@@ -62,25 +63,41 @@ class RMBGenerator(Sequence):
         xmax = int(anno['object'][0]['bndbox']['xmax']) -1
         ymax = int(anno['object'][0]['bndbox']['ymax']) -1
 
-        return np.array([
-            ((xmax+xmin)/2)/origin_w,
-            ((ymax+ymin)/2)/origin_h,
-            (xmax-xmin)/origin_w,
-            (ymax-ymin)/origin_h
-        ])
+        c_x =   ((xmax+xmin)/2)/origin_w
+        c_y =   ((ymax+ymin)/2)/origin_h
+        w   =   (xmax-xmin)/origin_w
+        h   =   (ymax-ymin)/origin_h
+
+        grid_x = int(np.floor(c_x*6))
+        grid_y = int(np.floor(c_y*6))
+        relative_x = c_x*6 - grid_x
+        relative_y = c_y*6 - grid_y
+
+        coded_anno[grid_y,grid_x,:] = np.array([1,relative_x,relative_y,w,h])
+        return coded_anno
 
 if __name__ == "__main__":
     # 检测输出
     rmbd = RMBGenerator("C:\\All\\Data\\RMB\\Detection\\train\\images",
                         "C:\\All\\Data\\RMB\\Detection\\train\\annos",
                         4,rescale=1./255)
-    rmbd.on_epoch_end()
+    # rmbd.on_epoch_end()
     x_batch,y_batch = rmbd.__getitem__(0)
 
     img = x_batch[0]*255
     img = img.astype(np.uint8)
-    c_x,c_y,w,h = y_batch[0]*400
+
+    # f =np.argmax(y_batch[0])
+    mat = y_batch[0]
+    a = np.argmax(mat)
+    b = mat.shape
+    y_grid,x_grid,_ =np.unravel_index(np.argmax(mat),mat.shape)
+    _,x_rela,y_rela,w,h = mat[y_grid][x_grid][:].tolist()
+    x_real =int((400/6)*(x_grid-x_rela))
+    y_real =int((400/6)*(y_grid-y_rela))
+    w_real = int(400*w)
+    h_real = int(400*h)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    cv2.rectangle(img,(int(c_x-w/2),int(c_y-h/2)),(int(c_x+w/2),int(c_y+h/2)),color=(0,255,0),thickness=2)
+    cv2.rectangle(img,(int(x_real-w_real/2),int(y_real-h_real/2)),(int(x_real+w_real/2),int(y_real+h_real/2)),color=(0,255,0),thickness=2)
     cv2.imshow("f",img)
     cv2.waitKey(0)

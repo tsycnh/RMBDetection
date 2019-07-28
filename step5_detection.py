@@ -27,21 +27,19 @@ anchors = [10,14,  23,27,  37,58,  81,82,  135,169,  344,319]
 
 
 backbone = ResNet50(include_top=False,weights='imagenet',input_shape=(400,400,3))
-backbone.summary(positions=[.22, .55, .67, 1.])
+# backbone.summary(positions=[.22, .55, .67, 1.])
 
 model = Sequential([
     backbone,
-    MaxPooling2D(),
     Conv2D(512,kernel_size=(1,1),padding="same",activation='relu'),
-    Conv2D(512,kernel_size=(3,3),activation='relu'),
-    Flatten(),
-    Dense(1024,activation='relu'),
-    Dense(4,activation='sigmoid')
+    Conv2D(1024,kernel_size=(3,3),padding='same',activation='relu'),
+    MaxPooling2D(),
+    Conv2D(512, kernel_size=(1, 1), padding="same", activation='relu'),
+    Conv2D(1024, kernel_size=(3, 3), padding='same', activation='relu'),
+    Conv2D(5,(1,1),padding='same',activation='relu')
 ])
 backbone.trainable = False
 model.summary(positions=[.22, .55, .67, 1.])
-# 输出的四个节点分别表示center_x,center_y,w,h。这四个值都是bbox相对于图像长宽的值，取值范围均为0~1
-
 model.compile(optimizer=rmsprop(lr=1e-3),loss='binary_crossentropy')
 
 # 准备数据
