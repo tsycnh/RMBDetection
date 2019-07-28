@@ -7,23 +7,7 @@ from rmbgenerator import RMBGenerator
 from keras.callbacks import TensorBoard,ModelCheckpoint,TerminateOnNaN,LearningRateScheduler
 import time
 from keras.optimizers import rmsprop
-
-'''
-# 方案1
-# 以yolov3-tiny为基础打造。
-backbone = load_model("weights/yolov3-tiny.h5")
-backbone.summary(positions=[.2, .55, .67, 1.])
-
-output1,output2=backbone.outputs
-o1 = Conv2D(15,kernel_size=(1,1),name='conv2d_append1')(output1)
-o2 = Conv2D(15,kernel_size=(1,1),name='conv2d_append2')(output2)
-
-model = Model(inputs=backbone.input,outputs=(o1,o2))
-
-model.summary(positions=[.2, .55, .67, 1.])
-
-anchors = [10,14,  23,27,  37,58,  81,82,  135,169,  344,319]
-'''
+from stloss import stloss
 
 
 backbone = ResNet50(include_top=False,weights='imagenet',input_shape=(400,400,3))
@@ -40,7 +24,7 @@ model = Sequential([
 ])
 backbone.trainable = False
 model.summary(positions=[.22, .55, .67, 1.])
-model.compile(optimizer=rmsprop(lr=1e-3),loss='binary_crossentropy')
+model.compile(optimizer=rmsprop(lr=1e-3),loss=stloss)
 
 # 准备数据
 train_gen = RMBGenerator(images_dir="C:\\All\\Data\\RMB\\Detection\\train\\images",
@@ -58,7 +42,7 @@ def lr_schedual(epoch,lr):
         return 1e-5
 callbacks = [TensorBoard("./logs/"+ format_time,write_graph=False),
              TerminateOnNaN(),
-             ModelCheckpoint("./tmp/RMBdt_weights_{epoch:02d}_valloss_{val_loss:.2f}.h5"),
+             ModelCheckpoint("./tmp/RMBdt_weights_{epoch:02d}_loss_{loss:.2f}_valloss_{val_loss:.2f}.h5"),
              # LearningRateScheduler(schedule= lr_schedual)
              ]
 model.fit_generator(train_gen,steps_per_epoch=len(train_gen),epochs=30,callbacks=callbacks,

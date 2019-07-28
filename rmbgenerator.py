@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     img = x_batch[0]*255
     img = img.astype(np.uint8)
-
+    np.save("y_batch.np",y_batch)
     # f =np.argmax(y_batch[0])
     mat = y_batch[0]
     a = np.argmax(mat)
