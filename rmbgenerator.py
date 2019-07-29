@@ -5,15 +5,7 @@ import numpy as np
 from pascal_voc_tools import XmlParser
 import cv2
 import random
-'''
-生成器设计：
-输入一个batch的图像，如:32x400x400x3
-输出：32x4
-其中4代表着图像中唯一的目标框。分别为center_x,center_y,w,h。
-前两者为将图像长宽归一化后目标框中心点相对于左上角的坐标
-后两者为目标框相对于归一化目标框的大小。
-4个值取值范围都是0~1          
-'''
+
 # 自定义一个数据生成器。继承自keras.utils.Sequence,可以和fit_generator无缝衔接
 # Sequence 是keras中数据生成器的基类。必须实现__getitem__(),__len__(),建议实现on_epoch_end(),可以在这里打乱数据集
 class RMBGenerator(Sequence):

@@ -73,8 +73,17 @@ DGUVOETG.jpg, YH01075371
    └──annos
 ```  
 
-`step5_detection.py`搭建目标检测模型。  
-`rmbgenerator.py`构建数据生成器。
+`step5_detection.py`搭建目标检测模型。基于yolo思路，针对特定问题进行了优化  
+`rmbgenerator.py`构建数据生成器。  
+`stloss.py`自定义的yolo loss计算方法  
+`step6_fintune_dt.py`在step5的基础上进行微调。    
+`step7_predict.py`可视化目标检测效果  
+
+训练好的模型参数：链接: https://pan.baidu.com/s/1xMgE181iw1mguoySNLWxhg 提取码: zzk5   
+
+---
+注：实验过程中的一些记录写在了experiment_log.md文件中。
+
 
 
 
