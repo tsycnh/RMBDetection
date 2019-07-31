@@ -59,6 +59,7 @@ DGUVOETG.jpg, YH01075371
 `step4_evaluate.py`：在public_test_data数据集上进行测试，输出结果，提交到官网，完成热身赛。实际训练数据用了900张，验证集900张
 
 ### 2.2 编码识别  
+#### 2.2.1 编码检测
 编码识别的整体思路是现在图像中提取编码区域的ROI，然后对提取的区域进行定长字符识别。由于官方没有给编码区域的ROI标注
 所以在这里用了一些别的参赛大佬已经标注好的部分区域，见[此](https://github.com/DueapeCommon/kaggle/blob/master/solutions/TinyMind%E4%BA%BA%E6%B0%91%E5%B8%81%E9%9D%A2%E5%80%BC%26%E5%86%A0%E5%AD%97%E5%8F%B7%E7%BC%96%E7%A0%81%E8%AF%86%E5%88%AB%E6%8C%91%E6%88%98%E8%B5%9B/task2/VOC2007.zip)
 
@@ -80,6 +81,8 @@ DGUVOETG.jpg, YH01075371
 `step7_predict.py`可视化目标检测效果  
 
 训练好的模型参数：链接: https://pan.baidu.com/s/1xMgE181iw1mguoySNLWxhg 提取码: zzk5   
+
+#### 2.2.2 编码识别  
 
 ---
 注：实验过程中的一些记录写在了experiment_log.md文件中。

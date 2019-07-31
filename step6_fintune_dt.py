@@ -7,18 +7,19 @@ import time,os
 from rmbgenerator import RMBGenerator
 from stloss import stloss,stModelCheckpoint
 
-model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\step_5-10.h5")
+model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\step_5-11.h5")
 
 learning_rate = 1e-4
-epochs = 300
+epochs = 100
 plot_model(model.layers[0])# 绘制主干模型
+# exit()
 trainable = False
 for layer in model.layers[0].layers:
     if trainable:
         layer.trainable = True
     else:
         layer.trainable = False
-    if layer.name == "activation_46":
+    if layer.name == "activation_46":# activation_46:解锁最后一组模块 activation_43:解锁最后两组模块
         trainable = True
 model.compile(optimizer=rmsprop(lr=learning_rate),loss=stloss)
 model.summary()
