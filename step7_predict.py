@@ -58,19 +58,19 @@ def analyse_data(x_batch,y_batch,predicts):
 
 
 if __name__ == "__main__":
-    batch_size = 100
+    batch_size = 5
     train_gen = RMBGenerator(images_dir="C:\\All\\Data\\RMB\\Detection\\train\\images",
                              annos_dir="C:\\All\\Data\\RMB\\Detection\\train\\annos",
                              batch_size=batch_size, rescale=1.0 / 255)
     val_gen = RMBGenerator(images_dir="C:\\All\\Data\\RMB\\Detection\\val\\images",
                            annos_dir="C:\\All\\Data\\RMB\\Detection\\val\\annos",
                            batch_size=batch_size, rescale=1.0 / 255)
-    model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\step_5-11.h5")
+    model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\step_6-1.h5")
 
     x_batch, y_batch = train_gen.__getitem__(0)
     x_batch_v, y_batch_v = val_gen.__getitem__(0)
     predicts = model.predict_on_batch(x_batch)
-    # predicts_v = model.predict_on_batch(x_batch_v)
+    predicts_v = model.predict_on_batch(x_batch_v)
     # np.save('tmp/predicts',predicts)
     # np.save('tmp/x_batch',x_batch)
     # np.save('tmp/y_batch',y_batch)
@@ -82,4 +82,4 @@ if __name__ == "__main__":
     # predicts= np.load('./tmp/predicts.npy')
     # predicts:4x6x6x5
     analyse_data(x_batch,y_batch,predicts)
-    # analyse_data(x_batch_v,y_batch_v,predicts_v)
+    analyse_data(x_batch_v,y_batch_v,predicts_v)

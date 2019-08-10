@@ -7,9 +7,9 @@ from keras.utils import Sequence
 from rmbgenerator import RMBGenerator
 from keras.callbacks import TensorBoard,ModelCheckpoint,TerminateOnNaN,LearningRateScheduler
 import time
-from keras.optimizers import rmsprop
+from keras.optimizers import rmsprop,adam,sgd
 from stloss import stloss,stModelCheckpoint
-
+from utils import ring
 
 backbone = ResNet50(include_top=False,weights='imagenet',input_shape=(400,400,3))
 # backbone.summary(positions=[.22, .55, .67, 1.])
@@ -40,12 +40,12 @@ model = Sequential([
 ])
 backbone.trainable = False
 model.summary(positions=[.22, .55, .67, 1.])
-model.compile(optimizer=rmsprop(lr=1e-4),loss=stloss)
+model.compile(optimizer=rmsprop(5e-3),loss=stloss)
 
 # 准备数据
 train_gen = RMBGenerator(images_dir="C:\\All\\Data\\RMB\\Detection\\train\\images",
                          annos_dir="C:\\All\\Data\\RMB\\Detection\\train\\annos",
-                         batch_size=32,rescale=1.0/255)
+                         batch_size=32,rescale=1.0/255,aug=False)
 val_gen = RMBGenerator(images_dir="C:\\All\\Data\\RMB\\Detection\\val\\images",
                          annos_dir="C:\\All\\Data\\RMB\\Detection\\val\\annos",
                          batch_size=4,rescale=1.0/255)
@@ -58,23 +58,9 @@ def lr_schedual(epoch,lr):
         return 1e-4
 callbacks = [TensorBoard("./logs/"+ format_time,write_graph=False),
              TerminateOnNaN(),
-             stModelCheckpoint("./tmp/RMBdt_weights_{epoch:02d}_loss_{loss:.2f}_valloss_{val_loss:.2f}.h5"),
+             stModelCheckpoint("./tmp/RMBdt_weights_{epoch:02d}_loss_{loss:.3f}_valloss_{val_loss:.3f}.h5"),
              # LearningRateScheduler(schedule= lr_schedual)
              ]
 model.fit_generator(train_gen,steps_per_epoch=len(train_gen),epochs=30,callbacks=callbacks,
                     validation_data=val_gen,validation_steps=len(val_gen))
-# model.save("./weights/s5.h5",include_optimizer=False)
-exit()
-# let's finetune
-trainable = False
-for layer in model.layers[0].layers:
-    if trainable:
-        layer.trainable = True
-    else:
-        layer.trainable = False
-    if layer.name == "activation_46":
-        trainable = True
-model.compile(optimizer=rmsprop(lr=1e-4),loss=stloss)
-model.summary()
-model.fit_generator(train_gen,steps_per_epoch=len(train_gen),epochs=30,callbacks=callbacks,
-                    validation_data=val_gen,validation_steps=len(val_gen),initial_epoch=30)
+ring()

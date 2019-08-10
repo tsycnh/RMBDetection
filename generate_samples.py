@@ -39,8 +39,8 @@ for i,name in enumerate(imgs_list):
     x_real = w_origin*x/400
     y_real = h_origin*y/400
 
-    # crop_origin_img = img_origin2[int(y_real-h_real/2):int(y_real+h_real/2),int(x_real-w_real/2):int(x_real+1.2*w_real/2)]
-    crop_origin_img = img_origin2[int(y_real-h_real/2):int(y_real+h_real/2),int(x_real-w_real/2):int(x_real+w_real/2)]
+    crop_origin_img = img_origin2[int(y_real-h_real/2):int(y_real+h_real/2),int(x_real-w_real/2):int(x_real+1.2*w_real/2)]
+    # crop_origin_img = img_origin2[int(y_real-h_real/2):int(y_real+h_real/2),int(x_real-w_real/2):int(x_real+w_real/2)]
     if i <train_num:
         dst_path = os.path.join(new_train_dir,name)
     elif train_num<=i<train_num+val_num:

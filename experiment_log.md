@@ -136,10 +136,6 @@ loss 0.07 valloss 0.19  总体来说已经相当不错，训练集和测试集�
 ![0.2](./resource/0.2.png)    
 ![100](./resource/100.png)    
 
-
-**至此，编码的目标检测任务完成，开始搞识别。**
-
-### Part3：编码识别
 2019年7月30日 17:39:44：准备识别数据  
 用Part2的模型来切割一样实验用样本。切割的样本中存在割不全的情况  
 2019年7月30日 21:59:23  
@@ -147,3 +143,44 @@ loss 0.07 valloss 0.19  总体来说已经相当不错，训练集和测试集�
 
 2019年7月31日 08:17:40  
 继续解冻到activation_43层，按照1e-5学习率训练。虽然loss有降，但valloss上涨，出现过拟合。  
+准备增加图像增强  
+且慢，我好像发现问题的所在。由于横向比较长的人民币做了x轴方向的压缩， 所以导致x方向并不敏感，才会有偏移的问题。
+实际上测试中的偏移很大，没有能较好的反映到训练中去。
+
+2019年7月31日 10:44:22:step6-1  
+增加了图像偏移上下左右30个像素偏移（相对400），并载入图像改为了双线性插值,可以消除摩尔纹。
+在step5-11的基础上继续迁移训练。  
+结果过拟合严重  
+
+2019年7月31日 10:54:19：step5-12  
+重新transfer learning 300个轮次  
+在地55个轮次出现过拟合loss0.213 valloss 3.334。在这一点继续finetune  
+
+2019年7月31日 12:19:03：step6-2  
+在step5-12继续微调100个epoch  
+
+2019年7月31日 19:15:05：step5-13  
+改用adam试试.换了几个都不行，然后又用最原始的未经过图像增强的生成器训练了一遍，和用
+图像增强一样，没能获得之前的好效果。为什么会这样？之前是分了很多次中断了再训练，现在
+一次直接训练反而不行，这里面的原因值得思考。是不是没微调造成的？
+
+2019年8月1日 07:30:50：step5-14  
+尝试复现之前的无数据扩增的训练结果  
+transfer learning：30epochs，rmsprop(1e-4)，no aug (step5) 无效
+transfer learning：30epochs，rmsprop(1e-3)，no aug (step5) 最优valloss：3.89
+    finetune：位置：activation_46，30epoch，rmsprop（1e-4），with aug(step6)最优valloss：1.652
+        finetune：位置：activation_43，30epoch，rmsprop（1e-4），no aug(step6)最优valloss：1.523
+    finetune：位置：activation_46，30epoch，rmsprop（1e-4），no aug(step6)最优valloss：0.452
+        finetune：位置：activation_46，30epoch，rmsprop（1e-4），no aug(step6)最优valloss：0.336   验证集loss一直在波动，没有显著降低
+        finetune：位置：activation_46，30epoch，rmsprop（1e-5），no aug(step6)最优valloss：0.474   loss，vallass稳中有降，但速度较慢
+        finetune：位置：activation_43，30epoch，rmsprop（1e-4），no aug(step6)最优loss\valloss：    不行，出现过拟合，训练集loss持续下降，但是验证集崩了
+        finetune：位置：activation_46，30epoch，rmsprop（1e-4）warmup=3(1e-5)，no aug(step6) 最优 loss\valloss：0.3005 warm up没有任何实质效果  
+        
+
+
+transfer learning：30epochs，rmsprop(5e-3)，no aug (step5) 最优valloss：
+**至此，编码的目标检测任务完成，开始搞识别。**
+
+### Part3：编码识别
+2019年8月4日 15:05:35 step8_1:  
+建立CRNN模型
