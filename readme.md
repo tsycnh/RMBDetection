@@ -79,8 +79,9 @@ DGUVOETG.jpg, YH01075371
 `stloss.py`自定义的yolo loss计算方法  
 `step6_fintune_dt.py`在step5的基础上进行微调。    
 `step7_predict.py`可视化目标检测效果  
+`generate_samples.py`批量生成后续编码识别所需的小图样本，Train,Val,Test各1000张  
 
-训练好的模型参数：链接: https://pan.baidu.com/s/1xMgE181iw1mguoySNLWxhg 提取码: zzk5   
+训练好的模型参数：链接: https://pan.baidu.com/s/1uIsBi5P1d76qtmvcnL10rg 提取码: m2ay    
 
 #### 2.2.2 编码识别  
 

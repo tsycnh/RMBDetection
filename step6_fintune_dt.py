@@ -8,8 +8,8 @@ from rmbgenerator import RMBGenerator
 from stloss import stloss,stModelCheckpoint
 from utils import ring
 
-model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\RMBdt_weights_27_loss_0.242_valloss_0.452.h5")
-learning_rate = 1e-4
+model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\RMBdt_weights_08_loss_1.316_valloss_3.501.h5")
+learning_rate = 1e-3
 warmup = 3
 warmup_lr = 1e-5
 epochs = 30
@@ -46,7 +46,7 @@ def lr_schedual(epoch,lr):
         return learning_rate
 callbacks = [TensorBoard("./logs/"+ format_time,write_graph=False),
              TerminateOnNaN(),
-             LearningRateScheduler(schedule= lr_schedual),
+             # LearningRateScheduler(schedule= lr_schedual),
              stModelCheckpoint("./tmp/RMBdt_weights_{epoch:02d}_loss_{loss:.3f}_valloss_{val_loss:.3f}.h5"),
              ]
 model.fit_generator(train_gen,steps_per_epoch=len(train_gen),epochs=epochs,callbacks=callbacks,

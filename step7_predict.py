@@ -9,14 +9,15 @@ def decode_predict(predict):
     pos = pd[..., 1:]
     conf[conf < 0.5] = 0
     y_grid_pd, x_grid_pd = np.unravel_index(np.argmax(conf), conf.shape)
-    print("pd:y_grid:%d x_grid:%d conf:%.2f" % (y_grid_pd, x_grid_pd, conf[y_grid_pd, x_grid_pd]))
+    best_conf = conf[y_grid_pd, x_grid_pd]
+    print("pd:y_grid:%d x_grid:%d conf:%.2f" % (y_grid_pd, x_grid_pd, best_conf))
 
     xywh = pos[y_grid_pd, x_grid_pd, :]
     x_real = int((400 / 6) * (x_grid_pd + xywh[0]))
     y_real = int((400 / 6) * (y_grid_pd + xywh[1]))
     w_real = int(400 * xywh[2])
     h_real = int(400 * xywh[3])
-    return x_real, y_real, w_real, h_real
+    return x_real, y_real, w_real, h_real,best_conf
 
 def decode_gt(gt):
     conf = gt[..., 0]
@@ -51,7 +52,7 @@ def analyse_data(x_batch,y_batch,predicts):
         img = x_batch[i] * 255
         img = img.astype(np.uint8)
         x_real,y_real,w_real,h_real = decode_gt(y_batch[i])
-        x_pred,y_pred,w_pred,h_pred = decode_predict(predicts[i])
+        x_pred,y_pred,w_pred,h_pred,_ = decode_predict(predicts[i])
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         visualization(img,(x_pred,y_pred,w_pred,h_pred),(x_real,y_real,w_real,h_real))
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     val_gen = RMBGenerator(images_dir="C:\\All\\Data\\RMB\\Detection\\val\\images",
                            annos_dir="C:\\All\\Data\\RMB\\Detection\\val\\annos",
                            batch_size=batch_size, rescale=1.0 / 255)
-    model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\step_6-1.h5")
+    model = load_model("C:\\All\\Tdevelop\\RMBDetection\\weights\\step_5-15-6.h5")
 
     x_batch, y_batch = train_gen.__getitem__(0)
     x_batch_v, y_batch_v = val_gen.__getitem__(0)
@@ -81,5 +82,7 @@ if __name__ == "__main__":
     # y_batch = np.load('./tmp/y_batch.npy')
     # predicts= np.load('./tmp/predicts.npy')
     # predicts:4x6x6x5
+    print("训练集效果")
     analyse_data(x_batch,y_batch,predicts)
+    print("验证集效果")
     analyse_data(x_batch_v,y_batch_v,predicts_v)
