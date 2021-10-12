@@ -20,7 +20,7 @@ mock==3.0.5
 networkx==2.3
 numpy==1.17.2
 opencv-python==3.4.6.27
-opencv-python-headless==4.1.1.26
+opencv-python-headless==4.2.0.32
 opt-einsum==3.1.0
 pascal-voc-tools==0.1.28
 Pillow==6.2.0
